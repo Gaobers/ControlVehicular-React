@@ -1,0 +1,31 @@
+{
+  "name": "ControlVehicular - React",
+
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "20.19.4",
+      "npmVersion": "10.8.2"
+    }
+  },
+
+  "postCreateCommand": "npm ci",
+
+  "forwardPorts": [8081],
+
+  "portsAttributes": {
+    "8081": {
+      "label": "Expo Metro"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
