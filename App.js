@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
+
+// Importar las pantallas
+import WelcomeScreen from "./components/Bienvenida";
+import LoginScreen from "./components/Login";
+import VehiculosScreen from "./components/Vehiculos";
 
 export default function App() {
+  const [pantalla, setPantalla] = useState("bienvenida");
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light" />
+
+      {pantalla === "bienvenida" ? (
+        <WelcomeScreen
+          onContinue={() => setPantalla("login")}
+        />
+      ) : pantalla === "login" ? (
+        <LoginScreen
+          onLogin={() => setPantalla("vehiculos")}
+        />
+      ) : (
+        <VehiculosScreen />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#0B1F3A",
   },
 });
