@@ -2,17 +2,32 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
-const BASE_URL =
+
+const LOCAL_URL =
     Platform.OS === "web"
         ? "http://localhost:8080"
-        : "http://192.168.1.42:8080";
+        : "http://10.147.250.137:8080";
+
+
+const RENDER_URL =
+    "https://controlvehicular-6s7g.onrender.com";
+
+
+/*
+ * Usa LOCAL_URL para desarrollo local.
+ * Usa RENDER_URL para APK / producción.
+ */
+const BASE_URL = RENDER_URL;
+
 
 const API = axios.create({
-    baseURL: "http://localhost:8080",
+
+    baseURL: BASE_URL,
 
     headers: {
         "Content-Type": "application/json"
     }
+
 });
 
 
@@ -21,7 +36,9 @@ API.interceptors.request.use(
     async (config) => {
 
         const token =
-            await AsyncStorage.getItem("userToken");
+            await AsyncStorage.getItem(
+                "userToken"
+            );
 
         if (token) {
 
@@ -36,6 +53,7 @@ API.interceptors.request.use(
 
         return Promise.reject(error);
     }
+
 );
 
 
