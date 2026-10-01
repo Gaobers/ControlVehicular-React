@@ -1,17 +1,43 @@
-import { apiRequest } from "../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import API from "../api";
 
-const ENDPOINT = "/api/auth";
 
-export const iniciarSesion = async (correo, clave) => {
+export const authService = {
 
-    const credenciales = {
-        correo,
-        clave
-    };
+    login: async (correo, clave) => {
 
-    return await apiRequest(
-        `${ENDPOINT}/login`,
-        "POST",
-        credenciales
-    );
+        const response = await API.post(
+            "/api/auth/login",
+            {
+                correo,
+                clave
+            }
+        );
+
+        if (response.data?.token) {
+
+            await AsyncStorage.setItem(
+                "userToken",
+                response.data.token
+            );
+        }
+
+        return response.data;
+    },
+
+
+    logout: async () => {
+
+        await AsyncStorage.removeItem(
+            "userToken"
+        );
+    },
+
+
+    obtenerToken: async () => {
+
+        return await AsyncStorage.getItem(
+            "userToken"
+        );
+    }
 };

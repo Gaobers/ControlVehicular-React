@@ -9,15 +9,13 @@ import {
     ActivityIndicator
 } from "react-native";
 
-import { iniciarSesion } from "../services/authService";
+import { authService } from "../services/authService";
 
 
-export default function LoginScreen({ onLogin }) {
+export default function LoginScreen({ onLoginSuccess }) {
 
     const [correo, setCorreo] = useState("");
     const [clave, setClave] = useState("");
-
-    const [recordarme, setRecordarme] = useState(false);
 
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState("");
@@ -40,7 +38,7 @@ export default function LoginScreen({ onLogin }) {
 
             setCargando(true);
 
-            const respuesta = await iniciarSesion(
+            const respuesta = await authService.login(
                 correo.trim(),
                 clave
             );
@@ -54,16 +52,29 @@ export default function LoginScreen({ onLogin }) {
                 return;
             }
 
-            onLogin(respuesta.token);
+            /*
+             * authService ya guardó el token
+             * en AsyncStorage.
+             *
+             * Aquí solamente notificamos a App.js
+             * que el login fue exitoso.
+             */
+            onLoginSuccess();
 
         } catch (error) {
 
-            console.error(error);
-
-            setError(
-                error.message ||
-                "No se pudo iniciar sesión"
+            console.error(
+                "Error al iniciar sesión:",
+                error
             );
+
+            const mensajeError =
+                error?.response?.data?.mensaje ||
+                error?.response?.data?.message ||
+                error?.message ||
+                "Credenciales incorrectas o error en el servidor";
+
+            setError(mensajeError);
 
         } finally {
 
@@ -80,9 +91,11 @@ export default function LoginScreen({ onLogin }) {
 
                 {/* LOGO */}
                 <View style={styles.logo}>
+
                     <Text style={styles.logoTexto}>
                         CV
                     </Text>
+
                 </View>
 
 
@@ -140,38 +153,6 @@ export default function LoginScreen({ onLogin }) {
                     />
 
 
-                    {/* RECORDAR SESIÓN */}
-                    <Pressable
-                        style={styles.recordarmeContainer}
-                        onPress={() =>
-                            setRecordarme(!recordarme)
-                        }
-                    >
-
-                        <View
-                            style={[
-                                styles.checkbox,
-
-                                recordarme &&
-                                styles.checkboxActivo
-                            ]}
-                        >
-
-                            {recordarme && (
-                                <Text style={styles.check}>
-                                    ✓
-                                </Text>
-                            )}
-
-                        </View>
-
-                        <Text style={styles.recordarmeTexto}>
-                            Recordar sesión
-                        </Text>
-
-                    </Pressable>
-
-
                     {/* ERROR */}
                     {error ? (
 
@@ -182,7 +163,7 @@ export default function LoginScreen({ onLogin }) {
                     ) : null}
 
 
-                    {/* BOTÓN */}
+                    {/* BOTÓN LOGIN */}
                     {cargando ? (
 
                         <View style={styles.cargando}>
@@ -191,6 +172,10 @@ export default function LoginScreen({ onLogin }) {
                                 size="small"
                                 color="#ffffff"
                             />
+
+                            <Text style={styles.cargandoTexto}>
+                                Iniciando sesión...
+                            </Text>
 
                         </View>
 
@@ -214,7 +199,7 @@ export default function LoginScreen({ onLogin }) {
                     )}
 
 
-                    {/* OLVIDÉ CONTRASEÑA */}
+                    {/* RECUPERAR CONTRASEÑA */}
                     <Pressable
                         onPress={() => {
                             console.log(
@@ -268,7 +253,6 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
 
-
     contenido: {
         flex: 1,
         width: "100%",
@@ -278,7 +262,6 @@ const styles = StyleSheet.create({
         paddingBottom: 18,
         justifyContent: "center"
     },
-
 
     logo: {
         width: 58,
@@ -291,13 +274,11 @@ const styles = StyleSheet.create({
         marginBottom: 16
     },
 
-
     logoTexto: {
         fontSize: 20,
         fontWeight: "800",
         color: "#0d2340"
     },
-
 
     nombreSistema: {
         color: "#ffffff",
@@ -306,7 +287,6 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
 
-
     accesoSistema: {
         color: "#a8b3c3",
         fontSize: 11,
@@ -314,7 +294,6 @@ const styles = StyleSheet.create({
         marginTop: 6,
         marginBottom: 25
     },
-
 
     tarjeta: {
         backgroundColor: "#ffffff",
@@ -333,14 +312,12 @@ const styles = StyleSheet.create({
         elevation: 7
     },
 
-
     titulo: {
         color: "#111827",
         fontSize: 21,
         fontWeight: "800",
         textAlign: "center"
     },
-
 
     descripcion: {
         color: "#8a94a3",
@@ -350,14 +327,12 @@ const styles = StyleSheet.create({
         marginBottom: 24
     },
 
-
     label: {
         color: "#303846",
         fontSize: 11,
         fontWeight: "700",
         marginBottom: 7
     },
-
 
     input: {
         height: 46,
@@ -371,47 +346,6 @@ const styles = StyleSheet.create({
         marginBottom: 17
     },
 
-
-    recordarmeContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 20,
-        alignSelf: "flex-start"
-    },
-
-
-    checkbox: {
-        width: 17,
-        height: 17,
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: "#aeb6c2",
-        backgroundColor: "#ffffff",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-
-
-    checkboxActivo: {
-        backgroundColor: "#2563eb",
-        borderColor: "#2563eb"
-    },
-
-
-    check: {
-        color: "#ffffff",
-        fontSize: 11,
-        fontWeight: "bold"
-    },
-
-
-    recordarmeTexto: {
-        color: "#4b5563",
-        fontSize: 11,
-        marginLeft: 7
-    },
-
-
     boton: {
         backgroundColor: "#2868ed",
         borderRadius: 8,
@@ -420,11 +354,9 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
 
-
     botonPresionado: {
         opacity: 0.85
     },
-
 
     botonTexto: {
         color: "#ffffff",
@@ -432,8 +364,8 @@ const styles = StyleSheet.create({
         fontWeight: "800"
     },
 
-
     cargando: {
+        flexDirection: "row",
         backgroundColor: "#2868ed",
         borderRadius: 8,
         height: 48,
@@ -441,6 +373,12 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
 
+    cargandoTexto: {
+        color: "#ffffff",
+        fontSize: 11,
+        fontWeight: "700",
+        marginLeft: 8
+    },
 
     error: {
         color: "#dc2626",
@@ -448,7 +386,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         textAlign: "center"
     },
-
 
     olvido: {
         color: "#2563eb",
@@ -459,13 +396,11 @@ const styles = StyleSheet.create({
         marginBottom: 21
     },
 
-
     info: {
         backgroundColor: "#f5f7fa",
         borderRadius: 8,
         padding: 13
     },
-
 
     infoTitulo: {
         color: "#374151",
@@ -474,13 +409,11 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
 
-
     infoTexto: {
         color: "#8a94a3",
         fontSize: 9,
         lineHeight: 14
     },
-
 
     footer: {
         color: "#8592a5",

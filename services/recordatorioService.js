@@ -1,58 +1,70 @@
-import { apiRequest } from "../api";
+import API from "../api";
 
-const ENDPOINT = "/api/recordatorios";
 
-export const obtenerRecordatorios = async (token) => {
-    try {
-        return await apiRequest(
-            `${ENDPOINT}/lista`,
-            "GET",
-            null,
-            token
-        );
-    } catch (error) {
+export const recordatorioService = {
 
-        // Tu backend devuelve 404 cuando la lista está vacía.
-        if (error.status === 404) {
-            return [];
+    obtenerTodos: async () => {
+
+        try {
+
+            const response = await API.get(
+                "/api/recordatorios/lista"
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            if (error.response?.status === 404) {
+                return [];
+            }
+
+            throw error;
         }
+    },
 
-        throw error;
+
+    obtenerPorId: async (id) => {
+
+        const response = await API.get(
+            `/api/recordatorios/${id}`
+        );
+
+        return response.data;
+    },
+
+
+    crear: async (recordatorio) => {
+
+        const response = await API.post(
+            "/api/recordatorios",
+            recordatorio
+        );
+
+        return response.data;
+    },
+
+
+    actualizar: async (
+        id,
+        recordatorio
+    ) => {
+
+        const response = await API.put(
+            `/api/recordatorios/${id}`,
+            recordatorio
+        );
+
+        return response.data;
+    },
+
+
+    eliminar: async (id) => {
+
+        const response = await API.delete(
+            `/api/recordatorios/${id}`
+        );
+
+        return response.data;
     }
-};
-
-export const obtenerRecordatorioPorId = async (id, token) => {
-    return await apiRequest(
-        `${ENDPOINT}/${id}`,
-        "GET",
-        null,
-        token
-    );
-};
-
-export const crearRecordatorio = async (recordatorio, token) => {
-    return await apiRequest(
-        ENDPOINT,
-        "POST",
-        recordatorio,
-        token
-    );
-};
-
-export const editarRecordatorio = async (id, recordatorio, token) => {
-    return await apiRequest(
-        `${ENDPOINT}/${id}`,
-        "PUT",
-        recordatorio,
-        token
-    );
-};
-
-export const eliminarRecordatorio = async (id, token) => {
-    return await apiRequest(
-        `${ENDPOINT}/${id}`,
-        "DELETE",
-        null,
-        token
-    );
 };
