@@ -1,37 +1,36 @@
-import React, { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import React from "react";
+
+import {
+    SafeAreaView,
+    StyleSheet
+} from "react-native";
+
 import { StatusBar } from "expo-status-bar";
 
-// Importar las pantallas
-import WelcomeScreen from "./components/Bienvenida";
-import LoginScreen from "./components/Login";
-import VehiculosScreen from "./components/Vehiculos";
+import VehiculosScreen
+    from "./components/VehiculosScreen";
+
 
 export default function App() {
-  const [pantalla, setPantalla] = useState("bienvenida");
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+    return (
 
-      {pantalla === "bienvenida" ? (
-        <WelcomeScreen
-          onContinue={() => setPantalla("login")}
-        />
-      ) : pantalla === "login" ? (
-        <LoginScreen
-          onLogin={() => setPantalla("vehiculos")}
-        />
-      ) : (
-        <VehiculosScreen />
-      )}
-    </SafeAreaView>
-  );
+        <SafeAreaView style={styles.container}>
+
+            <StatusBar style="light" />
+
+            <VehiculosScreen />
+
+        </SafeAreaView>
+    );
 }
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0B1F3A",
-  },
+
+    container: {
+        flex: 1,
+        backgroundColor: "#eef2f7"
+    }
+
 });
