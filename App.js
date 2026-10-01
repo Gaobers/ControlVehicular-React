@@ -12,7 +12,9 @@ import {
 } from "react-native";
 
 import LoginScreen from "./components/LoginScreen";
+import MenuScreen from "./components/MenuScreen";
 import RecordatoriosScreen from "./components/RecordatoriosScreen";
+import VehiculosScreen from "./components/VehiculosScreen";
 
 import { authService } from "./services/authService";
 
@@ -28,6 +30,18 @@ export default function App() {
         verificando,
         setVerificando
     ] = useState(true);
+
+    const [
+        pantallaActual,
+        setPantallaActual
+    ] = useState("menu");
+
+
+    useEffect(() => {
+
+        comprobarToken();
+
+    }, []);
 
 
     const comprobarToken = async () => {
@@ -57,11 +71,38 @@ export default function App() {
     };
 
 
-    useEffect(() => {
+    const loginExitoso = () => {
 
-        comprobarToken();
+        setEstaAutenticado(true);
 
-    }, []);
+        setPantallaActual("menu");
+    };
+
+
+    const cerrarSesion = async () => {
+
+        try {
+
+            await authService.logout();
+
+            setEstaAutenticado(false);
+
+            setPantallaActual("menu");
+
+        } catch (error) {
+
+            console.error(
+                "Error al cerrar sesión:",
+                error
+            );
+        }
+    };
+
+
+    const irAlMenu = () => {
+
+        setPantallaActual("menu");
+    };
 
 
     if (verificando) {
@@ -72,7 +113,9 @@ export default function App() {
                 style={styles.loadingScreen}
             >
 
-                <View style={styles.loadingLogo}>
+                <View
+                    style={styles.loadingLogo}
+                >
 
                     <Text
                         style={
@@ -91,7 +134,9 @@ export default function App() {
                 />
 
 
-                <Text style={styles.loadingText}>
+                <Text
+                    style={styles.loadingText}
+                >
                     Cargando sistema...
                 </Text>
 
@@ -100,22 +145,132 @@ export default function App() {
     }
 
 
-    return estaAutenticado ? (
+    if (!estaAutenticado) {
 
-        <RecordatoriosScreen
+        return (
 
-            onLogout={() =>
-                setEstaAutenticado(false)
+            <LoginScreen
+                onLoginSuccess={
+                    loginExitoso
+                }
+            />
+
+        );
+    }
+
+
+    /*
+     * MENÚ PRINCIPAL
+     */
+    if (pantallaActual === "menu") {
+
+        return (
+
+            <MenuScreen
+
+                onVehiculos={() =>
+                    setPantallaActual(
+                        "vehiculos"
+                    )
+                }
+
+                onRecordatorios={() =>
+                    setPantallaActual(
+                        "recordatorios"
+                    )
+                }
+
+                onLogout={
+                    cerrarSesion
+                }
+
+            />
+        );
+    }
+
+
+    /*
+     * MÓDULO VEHÍCULOS
+     */
+    if (pantallaActual === "vehiculos") {
+
+        return (
+
+            <SafeAreaView
+                style={styles.appContainer}
+            >
+
+                <VehiculosScreen
+
+                    onVolver={
+                        irAlMenu
+                    }
+
+                    onLogout={
+                        cerrarSesion
+                    }
+
+                />
+
+            </SafeAreaView>
+        );
+    }
+
+
+    /*
+     * MÓDULO RECORDATORIOS
+     */
+    if (
+        pantallaActual ===
+        "recordatorios"
+    ) {
+
+        return (
+
+            <SafeAreaView
+                style={styles.appContainer}
+            >
+
+                <RecordatoriosScreen
+
+                    onVolver={
+                        irAlMenu
+                    }
+
+                    onLogout={
+                        cerrarSesion
+                    }
+
+                />
+
+            </SafeAreaView>
+        );
+    }
+
+
+    /*
+     * RESPALDO
+     * Si por algún motivo pantallaActual
+     * contiene un valor desconocido.
+     */
+    return (
+
+        <MenuScreen
+
+            onVehiculos={() =>
+                setPantallaActual(
+                    "vehiculos"
+                )
             }
 
-        />
+            onRecordatorios={() =>
+                setPantallaActual(
+                    "recordatorios"
+                )
+            }
 
-    ) : (
-
-        <LoginScreen
-
-            onLoginSuccess={() =>
-                setEstaAutenticado(true)
+            onLogout={
+                cerrarSesion
             }
 
         />
@@ -124,6 +279,12 @@ export default function App() {
 
 
 const styles = StyleSheet.create({
+
+    appContainer: {
+        flex: 1,
+        backgroundColor: "#eef2f7"
+    },
+
 
     loadingScreen: {
 
@@ -171,4 +332,5 @@ const styles = StyleSheet.create({
 
         marginTop: 12
     }
+
 });

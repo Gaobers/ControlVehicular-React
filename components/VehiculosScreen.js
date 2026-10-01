@@ -20,7 +20,10 @@ import {
 } from "../services/vehiculoService";
 
 
-export default function VehiculosScreen() {
+export default function VehiculosScreen({
+    onVolver,
+    onLogout
+}) {
 
     const [vehiculos, setVehiculos] =
         useState([]);
@@ -472,125 +475,162 @@ export default function VehiculosScreen() {
 
 
     const activarVehiculo =
-        async (vehiculo) => {
+    async (vehiculo) => {
 
-            try {
+        try {
 
-                setError("");
-                setMensaje("");
+            setError("");
+            setMensaje("");
 
+            const vehiculoModificado = {
 
-                const vehiculoModificado = {
+                marca:
+                    vehiculo.marca,
 
-                    marca:
-                        vehiculo.marca,
+                modelo:
+                    vehiculo.modelo,
 
-                    modelo:
-                        vehiculo.modelo,
+                anio:
+                    vehiculo.anio,
 
-                    anio:
-                        vehiculo.anio,
+                placa:
+                    vehiculo.placa,
 
-                    placa:
-                        vehiculo.placa,
+                color:
+                    vehiculo.color,
 
-                    color:
-                        vehiculo.color,
+                kilometrajeActual:
+                    vehiculo.kilometrajeActual,
 
-                    kilometrajeActual:
-                        vehiculo.kilometrajeActual,
+                vin:
+                    vehiculo.vin,
 
-                    vin:
-                        vehiculo.vin,
+                motor:
+                    vehiculo.motor,
 
-                    motor:
-                        vehiculo.motor,
-
-                    estado: "ACTIVO"
-                };
-
-
-                await vehiculoService.actualizar(
-                    vehiculo.id,
-                    vehiculoModificado
-                );
+                estado: "ACTIVO"
+            };
 
 
-                setMensaje(
-                    "Vehículo activado correctamente."
-                );
+            await vehiculoService.actualizar(
+                vehiculo.id,
+                vehiculoModificado
+            );
 
 
-                await cargarVehiculos();
+            setMensaje(
+                "Vehículo activado correctamente."
+            );
 
 
-            } catch (error) {
+            await cargarVehiculos();
 
-                console.error(
-                    "Error al activar vehículo:",
-                    error
-                );
+        } catch (error) {
 
-                setError(
-                    obtenerMensajeError(error)
-                );
-            }
-        };
+            console.error(
+                "Error al activar vehículo:",
+                error
+            );
 
-
-    const cantidadActivos =
-        vehiculos.filter(
-            vehiculo =>
-                vehiculo.estado === "ACTIVO"
-        ).length;
+            setError(
+                obtenerMensajeError(error)
+            );
+        }
+    };
 
 
-    if (cargando) {
+const cerrarSesion = async () => {
 
-        return (
+    try {
 
-            <View style={styles.loadingContainer}>
+        if (onLogout) {
 
-                <ActivityIndicator
-                    size="large"
-                    color="#2563eb"
-                />
+            await onLogout();
+        }
 
-                <Text style={styles.loadingText}>
-                    Cargando vehículos...
-                </Text>
+    } catch (error) {
 
-            </View>
+        console.error(
+            "Error al cerrar sesión:",
+            error
         );
     }
+};
 
 
-    return (
-
-        <ScrollView
-            style={styles.screen}
-            contentContainerStyle={
-                styles.content
-            }
-            keyboardShouldPersistTaps="handled"
-        >
-
-            <View style={styles.container}>
+const cantidadActivos =
+    vehiculos.filter(
+        vehiculo =>
+            vehiculo.estado === "ACTIVO"
+    ).length;
 
 
-                {/* ENCABEZADO */}
+return (
 
-                <View style={styles.header}>
+    <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+    >
 
-                    <Text style={styles.headerTitle}>
-                        CONTROL VEHICULAR
-                    </Text>
+        <View style={styles.container}>
 
-                    <Text style={styles.headerSubtitle}>
-                        Administración de vehículos
-                    </Text>
+
+            {/* ENCABEZADO */}
+
+            <View style={styles.header}>
+
+                <View style={styles.headerTop}>
+
+                    <View>
+
+                        <Text style={styles.headerTitle}>
+                            CONTROL VEHICULAR
+                        </Text>
+
+                        <Text style={styles.headerSubtitle}>
+                            Administración de vehículos
+                        </Text>
+
+                    </View>
+
+
+                    <View style={styles.headerActions}>
+
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.backButton,
+                                pressed && styles.buttonPressed
+                            ]}
+                            onPress={onVolver}
+                        >
+                            <Text style={styles.backButtonText}>
+                                {esMovil
+                                    ? "←"
+                                    : "← MENÚ"}
+                            </Text>
+                        </Pressable>
+
+
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.logoutButton,
+                                pressed && styles.buttonPressed
+                            ]}
+                            onPress={cerrarSesion}
+                        >
+                            <Text style={styles.logoutText}>
+                                {esMovil
+                                    ? "SALIR"
+                                    : "CERRAR SESIÓN"}
+                            </Text>
+                        </Pressable>
+
+                    </View>
 
                 </View>
+
+            </View>
 
 
                 {/* FORMULARIO */}
@@ -1196,26 +1236,69 @@ const styles = StyleSheet.create({
         color: "#64748b"
     },
 
-    header: {
-        backgroundColor: "#0B1F3A",
-        padding: 25,
-        borderRadius: 18,
-        marginBottom: 20
-    },
+   header: {
+    backgroundColor: "#0B1F3A",
+    padding: 20,
+    borderRadius: 18,
+    marginBottom: 20
+},
 
-    headerTitle: {
-        fontSize: 22,
-        fontWeight: "bold",
-        color: "#FFFFFF",
-        textAlign: "center"
-    },
+headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF"
+},
 
-    headerSubtitle: {
-        fontSize: 14,
-        color: "#B8C7D9",
-        textAlign: "center",
-        marginTop: 8
-    },
+headerSubtitle: {
+    fontSize: 12,
+    color: "#B8C7D9",
+    marginTop: 5
+},
+
+headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12
+},
+
+headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
+},
+
+backButton: {
+    backgroundColor: "#ffffff",
+    minHeight: 38,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center"
+},
+
+backButtonText: {
+    color: "#0B1F3A",
+    fontSize: 10,
+    fontWeight: "800"
+},
+
+logoutButton: {
+    backgroundColor: "#17385f",
+    borderWidth: 1,
+    borderColor: "#345475",
+    minHeight: 38,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center"
+},
+
+logoutText: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "800"
+},
 
     card: {
         backgroundColor: "#FFFFFF",

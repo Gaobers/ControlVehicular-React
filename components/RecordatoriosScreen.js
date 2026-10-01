@@ -22,6 +22,7 @@ import {
 
 
 export default function RecordatoriosScreen({
+    onVolver,
     onLogout
 }) {
 
@@ -503,29 +504,36 @@ export default function RecordatoriosScreen({
                     </View>
 
 
-                    <Pressable
-                        style={({ pressed }) => [
+                    <View style={styles.headerActions}>
 
-                            styles.logoutButton,
+                <Pressable
+                    style={({ pressed }) => [
+                        styles.backButton,
+                        pressed && styles.buttonPressed
+                    ]}
+                    onPress={onVolver}
+                >
+                    <Text style={styles.backButtonText}>
+                        {esMovil ? "←" : "← MENÚ"}
+                    </Text>
+                </Pressable>
 
-                            pressed &&
-                            styles.buttonPressed
 
-                        ]}
-                        onPress={cerrarSesion}
-                    >
+                <Pressable
+                    style={({ pressed }) => [
+                        styles.logoutButton,
+                        pressed && styles.buttonPressed
+                    ]}
+                    onPress={cerrarSesion}
+                >
+                    <Text style={styles.logoutText}>
+                        {esMovil
+                            ? "SALIR"
+                            : "CERRAR SESIÓN"}
+                    </Text>
+                </Pressable>
 
-                        <Text
-                            style={
-                                styles.logoutText
-                            }
-                        >
-                            {esMovil
-                                ? "SALIR"
-                                : "CERRAR SESIÓN"}
-                        </Text>
-
-                    </Pressable>
+            </View>
 
                 </View>
 
@@ -1434,6 +1442,27 @@ const styles = StyleSheet.create({
         fontSize: 10,
         marginTop: 3
     },
+
+    headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
+},
+
+backButton: {
+    backgroundColor: "#ffffff",
+    minHeight: 38,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center"
+},
+
+backButtonText: {
+    color: "#0d2340",
+    fontSize: 10,
+    fontWeight: "800"
+},
 
     logoutButton: {
         backgroundColor: "#17385f",
