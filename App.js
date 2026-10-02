@@ -1,42 +1,33 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
-import {
-  VehicleProvider,
-  AddMaintenanceForm,
-  VehicleList,
-} from './Components/VehicleComponents.js';
+import { StyleSheet, Text, StatusBar, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { VehicleProvider, AddMaintenanceForm, VehicleList } from './Components/VehicleComponents';
 
 export default function App() {
-  const [editingMaintenance, setEditingMaintenance] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   return (
-    <VehicleProvider>
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Gestión de Mantenimientos</Text>
-
-        <AddMaintenanceForm
-          editingMaintenance={editingMaintenance}
-          onFinishEdit={() => setEditingMaintenance(null)}
-        />
-
-        <VehicleList onSelectEdit={(item) => setEditingMaintenance(item)} />
-      </SafeAreaView>
-    </VehicleProvider>
+    <SafeAreaProvider>
+      <VehicleProvider>
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle="dark-content" />
+          <Text style={styles.title}>Control Vehicular</Text>
+          
+          <View style={styles.content}>
+            <AddMaintenanceForm 
+              editingMaintenance={editing} 
+              onFinishEdit={() => setEditing(null)} 
+            />
+            <VehicleList onSelectEdit={setEditing} />
+          </View>
+        </SafeAreaView>
+      </VehicleProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    paddingTop: 45,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
-    color: '#1a1a1a',
-  },
+  container: { flex: 1, paddingTop: 10, backgroundColor: '#f1f5f9' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, paddingHorizontal: 16 },
+  content: { flex: 1, paddingHorizontal: 16 },
 });

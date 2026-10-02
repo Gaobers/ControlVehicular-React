@@ -16,6 +16,12 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.carmin.controlvehicular",
+      "versionCode": 1,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -24,6 +30,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4b923145-5a6b-4d52-9c8f-73ce21ca01ee"
+      }
     }
   }
 }
