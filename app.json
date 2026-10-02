@@ -26,14 +26,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.gaober.ControlVehicularReact"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "4b923145-5a6b-4d52-9c8f-73ce21ca01ee"
+        "projectId": "c31b4f5f-26a0-4f8b-94a4-804b3c23d090"
       }
     }
   }
