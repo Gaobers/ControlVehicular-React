@@ -15,6 +15,7 @@ import LoginScreen from "./components/LoginScreen";
 import MenuScreen from "./components/MenuScreen";
 import RecordatoriosScreen from "./components/RecordatoriosScreen";
 import VehiculosScreen from "./components/VehiculosScreen";
+import GastosScreen from "./components/GastosScreen";
 
 import { authService } from "./services/authService";
 
@@ -180,6 +181,12 @@ export default function App() {
                     )
                 }
 
+                onGastos={() =>
+                    setPantallaActual(
+                        "gastos"
+                    )
+                }
+
                 onLogout={
                     cerrarSesion
                 }
@@ -248,33 +255,67 @@ export default function App() {
     }
 
 
+    /**
+ * MÓDULO GASTOS
+ */
+if (pantallaActual === "gastos") {
+
+    return (
+
+        <SafeAreaView
+            style={styles.appContainer}
+        >
+
+            <GastosScreen
+
+                onVolver={
+                    irAlMenu
+                }
+
+                onLogout={
+                    cerrarSesion
+                }
+
+            />
+
+        </SafeAreaView>
+    );
+}
+
+
     /*
      * RESPALDO
      * Si por algún motivo pantallaActual
      * contiene un valor desconocido.
      */
-    return (
+   return (
 
-        <MenuScreen
+    <MenuScreen
 
-            onVehiculos={() =>
-                setPantallaActual(
-                    "vehiculos"
-                )
-            }
+        onVehiculos={() =>
+            setPantallaActual(
+                "vehiculos"
+            )
+        }
 
-            onRecordatorios={() =>
-                setPantallaActual(
-                    "recordatorios"
-                )
-            }
+        onRecordatorios={() =>
+            setPantallaActual(
+                "recordatorios"
+            )
+        }
 
-            onLogout={
-                cerrarSesion
-            }
+        onGastos={() =>
+            setPantallaActual(
+                "gastos"
+            )
+        }
 
-        />
-    );
+        onLogout={
+            cerrarSesion
+        }
+
+    />
+);
 }
 
 

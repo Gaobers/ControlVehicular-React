@@ -14,6 +14,7 @@ import {
 export default function MenuScreen({
     onVehiculos,
     onRecordatorios,
+    onGastos,
     onLogout
 }) {
 
@@ -386,6 +387,70 @@ export default function MenuScreen({
 
                         </Pressable>
 
+
+                        {/* GASTOS */}
+
+<Pressable
+    style={({ pressed }) => [
+        styles.moduleCard,
+        pressed && styles.moduleCardPressed
+    ]}
+    onPress={onGastos}
+>
+
+    <View style={styles.moduleTop}>
+
+        <View
+            style={[
+                styles.moduleIcon,
+                styles.gastoIcon
+            ]}
+        >
+
+            <Text style={styles.moduleIconText}>
+                GS
+            </Text>
+
+        </View>
+
+
+        <View style={styles.moduleBadge}>
+
+            <Text style={styles.moduleBadgeText}>
+                MÓDULO
+            </Text>
+
+        </View>
+
+    </View>
+
+
+    <Text style={styles.moduleTitle}>
+        Gastos
+    </Text>
+
+
+    <Text style={styles.moduleDescription}>
+        Registra, consulta, modifica,
+        desactiva y reactiva los gastos
+        asociados a los vehículos.
+    </Text>
+
+
+    <View style={styles.moduleFooter}>
+
+        <Text style={styles.moduleLink}>
+            ADMINISTRAR
+        </Text>
+
+        <Text style={styles.arrow}>
+            →
+        </Text>
+
+    </View>
+
+</Pressable>
+
                     </View>
 
 
@@ -723,6 +788,11 @@ const styles = StyleSheet.create({
     reminderIcon: {
 
         backgroundColor: "#e9f8ef"
+    },
+
+
+    gastoIcon: {
+    backgroundColor: "#fff4e5"
     },
 
 

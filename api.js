@@ -17,7 +17,9 @@ const RENDER_URL =
  * Usa LOCAL_URL para desarrollo local.
  * Usa RENDER_URL para APK / producción.
  */
-const BASE_URL = RENDER_URL;
+//const BASE_URL = RENDER_URL;
+
+const BASE_URL = LOCAL_URL;
 
 
 const API = axios.create({
