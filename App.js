@@ -16,6 +16,7 @@ import MenuScreen from "./components/MenuScreen";
 import RecordatoriosScreen from "./components/RecordatoriosScreen";
 import VehiculosScreen from "./components/VehiculosScreen";
 import GastosScreen from "./components/GastosScreen";
+import MantenimientosScreen from "./components/MantenimientosScreen";
 
 import { authService } from "./services/authService";
 
@@ -187,6 +188,12 @@ export default function App() {
                     )
                 }
 
+                onMantenimientos={() =>
+                    setPantallaActual(
+                        "mantenimientos"
+                    )
+                }
+
                 onLogout={
                     cerrarSesion
                 }
@@ -283,6 +290,37 @@ if (pantallaActual === "gastos") {
 }
 
 
+/**
+ * MÓDULO MANTENIMIENTOS
+ */
+if (
+    pantallaActual ===
+    "mantenimientos"
+) {
+
+    return (
+
+        <SafeAreaView
+            style={styles.appContainer}
+        >
+
+            <MantenimientosScreen
+
+                onVolver={
+                    irAlMenu
+                }
+
+                onLogout={
+                    cerrarSesion
+                }
+
+            />
+
+        </SafeAreaView>
+    );
+}
+
+
     /*
      * RESPALDO
      * Si por algún motivo pantallaActual
@@ -312,6 +350,12 @@ if (pantallaActual === "gastos") {
 
         onLogout={
             cerrarSesion
+        }
+
+        onMantenimientos={() =>
+            setPantallaActual(
+                "mantenimientos"
+            )
         }
 
     />

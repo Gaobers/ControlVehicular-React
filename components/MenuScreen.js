@@ -15,6 +15,7 @@ export default function MenuScreen({
     onVehiculos,
     onRecordatorios,
     onGastos,
+    onMantenimientos,
     onLogout
 }) {
 
@@ -390,33 +391,119 @@ export default function MenuScreen({
 
                         {/* GASTOS */}
 
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.moduleCard,
+                                pressed && styles.moduleCardPressed
+                            ]}
+                            onPress={onGastos}
+                        >
+
+                        <View style={styles.moduleTop}>
+
+                            <View
+                                style={[
+                                    styles.moduleIcon,
+                                    styles.gastoIcon
+                                ]}
+                            >
+
+                                <Text style={styles.moduleIconText}>
+                                    GS
+                                </Text>
+
+                            </View>
+
+
+                            <View style={styles.moduleBadge}>
+
+                                <Text style={styles.moduleBadgeText}>
+                                    MÓDULO
+                                </Text>
+
+                            </View>
+
+                        </View>
+
+
+                        <Text style={styles.moduleTitle}>
+                            Gastos
+                        </Text>
+
+
+                        <Text style={styles.moduleDescription}>
+                            Registra, consulta, modifica,
+                            desactiva y reactiva los gastos
+                            asociados a los vehículos.
+                        </Text>
+
+
+                        <View style={styles.moduleFooter}>
+
+                            <Text style={styles.moduleLink}>
+                                ADMINISTRAR
+                            </Text>
+
+                            <Text style={styles.arrow}>
+                                →
+                            </Text>
+
+                        </View>
+
+                    </Pressable>
+
+                    </View>
+
+
+                    {/* MANTENIMIENTOS */}
+
 <Pressable
     style={({ pressed }) => [
+
         styles.moduleCard,
-        pressed && styles.moduleCardPressed
+
+        pressed &&
+        styles.moduleCardPressed
+
     ]}
-    onPress={onGastos}
+    onPress={
+        onMantenimientos
+    }
 >
 
-    <View style={styles.moduleTop}>
+    <View
+        style={styles.moduleTop}
+    >
 
         <View
             style={[
                 styles.moduleIcon,
-                styles.gastoIcon
+                styles.maintenanceIcon
             ]}
         >
 
-            <Text style={styles.moduleIconText}>
-                GS
+            <Text
+                style={
+                    styles.moduleIconText
+                }
+            >
+                MT
             </Text>
 
         </View>
 
 
-        <View style={styles.moduleBadge}>
+        <View
+            style={
+                styles.moduleBadge
+            }
+        >
 
-            <Text style={styles.moduleBadgeText}>
+            <Text
+                style={
+                    styles.moduleBadgeText
+                }
+            >
                 MÓDULO
             </Text>
 
@@ -425,33 +512,47 @@ export default function MenuScreen({
     </View>
 
 
-    <Text style={styles.moduleTitle}>
-        Gastos
+    <Text
+        style={styles.moduleTitle}
+    >
+        Mantenimientos
     </Text>
 
 
-    <Text style={styles.moduleDescription}>
-        Registra, consulta, modifica,
-        desactiva y reactiva los gastos
-        asociados a los vehículos.
+    <Text
+        style={
+            styles.moduleDescription
+        }
+    >
+        Programa, consulta, actualiza
+        y controla los mantenimientos
+        de los vehículos.
     </Text>
 
 
-    <View style={styles.moduleFooter}>
+    <View
+        style={
+            styles.moduleFooter
+        }
+    >
 
-        <Text style={styles.moduleLink}>
+        <Text
+            style={
+                styles.moduleLink
+            }
+        >
             ADMINISTRAR
         </Text>
 
-        <Text style={styles.arrow}>
+        <Text
+            style={styles.arrow}
+        >
             →
         </Text>
 
     </View>
 
 </Pressable>
-
-                    </View>
 
 
                     {/* INFORMACIÓN */}
@@ -696,14 +797,11 @@ const styles = StyleSheet.create({
 
 
     modulesGrid: {
-
         flexDirection: "row",
-
+        flexWrap: "wrap",
         gap: 16,
-
         marginBottom: 22
     },
-
 
     modulesGridMobile: {
 
@@ -738,7 +836,9 @@ const styles = StyleSheet.create({
 
         shadowRadius: 7,
 
-        elevation: 2
+        elevation: 2,
+
+        minWidth: 300
     },
 
 
@@ -793,6 +893,10 @@ const styles = StyleSheet.create({
 
     gastoIcon: {
     backgroundColor: "#fff4e5"
+    },
+
+    maintenanceIcon: {
+    backgroundColor: "#f3e8ff"
     },
 
 
