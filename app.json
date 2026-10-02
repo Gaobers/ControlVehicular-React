@@ -16,6 +16,12 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.carmin.controlvehicular",
+      "versionCode": 1,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
