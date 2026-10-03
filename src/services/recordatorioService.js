@@ -24,6 +24,25 @@ export const recordatorioService = {
     },
 
 
+    obtenerPaginados: async (
+        page = 0,
+        size = 10
+    ) => {
+
+        const response = await API.get(
+            "/api/recordatorios",
+            {
+                params: {
+                    page,
+                    size
+                }
+            }
+        );
+
+        return response.data;
+    },
+
+
     obtenerPorId: async (id) => {
 
         const response = await API.get(
