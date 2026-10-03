@@ -4,24 +4,30 @@ import React, {
 } from "react";
 
 import {
-    SafeAreaView,
     View,
     Text,
     StyleSheet,
     ActivityIndicator
 } from "react-native";
 
-import LoginScreen from "./components/LoginScreen";
-import MenuScreen from "./components/MenuScreen";
-import RecordatoriosScreen from "./components/RecordatoriosScreen";
-import VehiculosScreen from "./components/VehiculosScreen";
-import GastosScreen from "./components/GastosScreen";
-import MantenimientosScreen from "./components/MantenimientosScreen";
+import {
+    SafeAreaProvider,
+    SafeAreaView
+} from "react-native-safe-area-context";
 
-import { authService } from "./services/authService";
+import LoginScreen from "./src/components/LoginScreen";
+import MenuScreen from "./src/components/MenuScreen";
+import RecordatoriosScreen from "./src/components/RecordatoriosScreen";
+import VehiculosScreen from "./src/components/VehiculosScreen";
+import GastosScreen from "./src/components/GastosScreen";
+import MantenimientosScreen from "./src/components/MantenimientosScreen";
+import KilometrajesScreen from "./src/components/KilometrajesScreen";
+import ServiciosScreen from "./src/components/ServiciosScreen";
+
+import { authService } from "./src/services/authService";
 
 
-export default function App() {
+function AppContent() {
 
     const [
         estaAutenticado,
@@ -106,12 +112,36 @@ export default function App() {
         setPantallaActual("menu");
     };
 
+    const irAServicios = () => {
+    setPantallaActual("servicios");
+    };
+
+    const irAVehiculos = () => {
+        setPantallaActual("vehiculos");
+    };
+
+    const irAMantenimientos = () => {
+        setPantallaActual("mantenimientos");
+    };
+
+    const irARecordatorios = () => {
+        setPantallaActual("recordatorios");
+    };
+
+    const irAKilometrajes = () => {
+        setPantallaActual("kilometrajes");
+    };
+
+    const irAGastos = () => {
+        setPantallaActual("gastos");
+    };
+
 
     if (verificando) {
 
         return (
 
-            <SafeAreaView
+            <View
                 style={styles.loadingScreen}
             >
 
@@ -142,7 +172,7 @@ export default function App() {
                     Cargando sistema...
                 </Text>
 
-            </SafeAreaView>
+            </View>
         );
     }
 
@@ -164,43 +194,16 @@ export default function App() {
     /*
      * MENÚ PRINCIPAL
      */
-    if (pantallaActual === "menu") {
+if (pantallaActual === "menu") {
 
-        return (
-
-            <MenuScreen
-
-                onVehiculos={() =>
-                    setPantallaActual(
-                        "vehiculos"
-                    )
-                }
-
-                onRecordatorios={() =>
-                    setPantallaActual(
-                        "recordatorios"
-                    )
-                }
-
-                onGastos={() =>
-                    setPantallaActual(
-                        "gastos"
-                    )
-                }
-
-                onMantenimientos={() =>
-                    setPantallaActual(
-                        "mantenimientos"
-                    )
-                }
-
-                onLogout={
-                    cerrarSesion
-                }
-
-            />
-        );
-    }
+    return (
+        <MenuScreen
+            onVehiculos={irAVehiculos}
+            onServicios={irAServicios}
+            onLogout={cerrarSesion}
+        />
+    );
+}
 
 
     /*
@@ -210,23 +213,10 @@ export default function App() {
 
         return (
 
-            <SafeAreaView
-                style={styles.appContainer}
-            >
-
-                <VehiculosScreen
-
-                    onVolver={
-                        irAlMenu
-                    }
-
-                    onLogout={
-                        cerrarSesion
-                    }
-
-                />
-
-            </SafeAreaView>
+<VehiculosScreen
+    onVolver={irAlMenu}
+    onLogout={cerrarSesion}
+/>
         );
     }
 
@@ -241,23 +231,16 @@ export default function App() {
 
         return (
 
-            <SafeAreaView
-                style={styles.appContainer}
-            >
-
-                <RecordatoriosScreen
-
-                    onVolver={
-                        irAlMenu
-                    }
-
-                    onLogout={
-                        cerrarSesion
-                    }
-
-                />
-
-            </SafeAreaView>
+            <RecordatoriosScreen
+                onVolver={() =>
+                    setPantallaActual(
+                        "servicios"
+                    )
+                }
+                onLogout={
+                    cerrarSesion
+                }
+            />
         );
     }
 
@@ -269,23 +252,16 @@ if (pantallaActual === "gastos") {
 
     return (
 
-        <SafeAreaView
-            style={styles.appContainer}
-        >
-
             <GastosScreen
-
-                onVolver={
-                    irAlMenu
+                onVolver={() =>
+                    setPantallaActual(
+                        "servicios"
+                    )
                 }
-
                 onLogout={
                     cerrarSesion
                 }
-
             />
-
-        </SafeAreaView>
     );
 }
 
@@ -293,30 +269,55 @@ if (pantallaActual === "gastos") {
 /**
  * MÓDULO MANTENIMIENTOS
  */
+if (pantallaActual === "mantenimientos") {
+
+    return (
+        <MantenimientosScreen
+            onVolver={irAServicios}
+            onLogout={cerrarSesion}
+        />
+    );
+}
+
+
+/**
+ * MÓDULO KILOMETRAJES
+ */
 if (
     pantallaActual ===
-    "mantenimientos"
+    "kilometrajes"
 ) {
 
     return (
 
-        <SafeAreaView
-            style={styles.appContainer}
-        >
+        <KilometrajesScreen
+            onVolver={() =>
+                setPantallaActual(
+                    "servicios"
+                )
+            }
+            onLogout={
+                cerrarSesion
+            }
+        />
+    );
+}
 
-            <MantenimientosScreen
+/**
+ * SERVICIOS
+ */
+if (pantallaActual === "servicios") {
 
-                onVolver={
-                    irAlMenu
-                }
-
-                onLogout={
-                    cerrarSesion
-                }
-
-            />
-
-        </SafeAreaView>
+    return (
+        <ServiciosScreen
+            onInicio={irAlMenu}
+            onVehiculos={irAVehiculos}
+            onMantenimientos={irAMantenimientos}
+            onRecordatorios={irARecordatorios}
+            onKilometrajes={irAKilometrajes}
+            onGastos={irAGastos}
+            onLogout={cerrarSesion}
+        />
     );
 }
 
@@ -328,40 +329,50 @@ if (
      */
    return (
 
-    <MenuScreen
+<MenuScreen
 
-        onVehiculos={() =>
-            setPantallaActual(
-                "vehiculos"
-            )
-        }
+    onVehiculos={() =>
+        setPantallaActual(
+            "vehiculos"
+        )
+    }
 
-        onRecordatorios={() =>
-            setPantallaActual(
-                "recordatorios"
-            )
-        }
+    onServicios={() =>
+        setPantallaActual(
+            "servicios"
+        )
+    }
 
-        onGastos={() =>
-            setPantallaActual(
-                "gastos"
-            )
-        }
-
-        onLogout={
-            cerrarSesion
-        }
-
-        onMantenimientos={() =>
-            setPantallaActual(
-                "mantenimientos"
-            )
-        }
-
-    />
+    onLogout={
+        cerrarSesion
+    }
+/>
 );
 }
 
+export default function App() {
+
+    return (
+
+        <SafeAreaProvider>
+
+            <SafeAreaView
+                style={styles.safeArea}
+                edges={[
+                    "top",
+                    "right",
+                    "bottom",
+                    "left"
+                ]}
+            >
+
+                <AppContent />
+
+            </SafeAreaView>
+
+        </SafeAreaProvider>
+    );
+}
 
 const styles = StyleSheet.create({
 
@@ -369,6 +380,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#eef2f7"
     },
+
+    safeArea: {
+    flex: 1,
+    backgroundColor: "#eef2f7"
+},
 
 
     loadingScreen: {

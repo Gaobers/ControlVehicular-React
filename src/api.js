@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 const LOCAL_URL =
     Platform.OS === "web"
         ? "http://localhost:8080"
-        : "http://10.147.250.137:8080";
+        : "http://192.168.1.42:8080";
 
 
 const RENDER_URL =
@@ -17,9 +17,9 @@ const RENDER_URL =
  * Usa LOCAL_URL para desarrollo local.
  * Usa RENDER_URL para APK / producción.
  */
-//const BASE_URL = RENDER_URL;
+const BASE_URL = RENDER_URL;
 
-const BASE_URL = LOCAL_URL;
+//const BASE_URL = LOCAL_URL;
 
 
 const API = axios.create({
