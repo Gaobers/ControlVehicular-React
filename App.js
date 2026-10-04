@@ -1,78 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useEffect,
+    useState
+} from "react";
 
 import {
-    SafeAreaView,
     View,
     Text,
-    Pressable,
     StyleSheet,
-    ActivityIndicator,
-    useWindowDimensions
+    ActivityIndicator
 } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    SafeAreaProvider,
+    SafeAreaView
+} from "react-native-safe-area-context";
 
-import LoginScreen from "./components/LoginScreen";
-import RecordatoriosScreen from "./components/RecordatoriosScreen";
+import LoginScreen from "./src/components/LoginScreen";
+import MenuScreen from "./src/components/MenuScreen";
+import RecordatoriosScreen from "./src/components/RecordatoriosScreen";
+import VehiculosScreen from "./src/components/VehiculosScreen";
+import GastosScreen from "./src/components/GastosScreen";
+import MantenimientosScreen from "./src/components/MantenimientosScreen";
+import KilometrajesScreen from "./src/components/KilometrajesScreen";
+import ServiciosScreen from "./src/components/ServiciosScreen";
+
+import { authService } from "./src/services/authService";
 
 
-export default function App() {
+function AppContent() {
 
-    const [token, setToken] = useState(null);
-    const [cargandoSesion, setCargandoSesion] = useState(true);
+    const [
+        estaAutenticado,
+        setEstaAutenticado
+    ] = useState(false);
 
-    const { width } = useWindowDimensions();
-    const esMovil = width < 600;
+    const [
+        verificando,
+        setVerificando
+    ] = useState(true);
+
+    const [
+        pantallaActual,
+        setPantallaActual
+    ] = useState("menu");
 
 
     useEffect(() => {
-        cargarSesion();
+
+        comprobarToken();
+
     }, []);
 
 
-    const cargarSesion = async () => {
+    const comprobarToken = async () => {
 
         try {
 
-            const tokenGuardado =
-                await AsyncStorage.getItem("token");
+            const token =
+                await authService.obtenerToken();
 
-            if (tokenGuardado) {
-                setToken(tokenGuardado);
-            }
+            setEstaAutenticado(
+                !!token
+            );
 
         } catch (error) {
 
             console.error(
-                "Error al cargar la sesión:",
+                "Error al comprobar sesión:",
                 error
             );
 
+            setEstaAutenticado(false);
+
         } finally {
 
-            setCargandoSesion(false);
+            setVerificando(false);
         }
     };
 
 
-    const manejarLogin = async (nuevoToken) => {
+    const loginExitoso = () => {
 
-        try {
+        setEstaAutenticado(true);
 
-            await AsyncStorage.setItem(
-                "token",
-                nuevoToken
-            );
-
-            setToken(nuevoToken);
-
-        } catch (error) {
-
-            console.error(
-                "Error al guardar la sesión:",
-                error
-            );
-        }
+        setPantallaActual("menu");
     };
 
 
@@ -80,9 +91,11 @@ export default function App() {
 
         try {
 
-            await AsyncStorage.removeItem("token");
+            await authService.logout();
 
-            setToken(null);
+            setEstaAutenticado(false);
+
+            setPantallaActual("menu");
 
         } catch (error) {
 
@@ -94,113 +107,270 @@ export default function App() {
     };
 
 
-    if (cargandoSesion) {
+    const irAlMenu = () => {
+
+        setPantallaActual("menu");
+    };
+
+    const irAServicios = () => {
+    setPantallaActual("servicios");
+    };
+
+    const irAVehiculos = () => {
+        setPantallaActual("vehiculos");
+    };
+
+    const irAMantenimientos = () => {
+        setPantallaActual("mantenimientos");
+    };
+
+    const irARecordatorios = () => {
+        setPantallaActual("recordatorios");
+    };
+
+    const irAKilometrajes = () => {
+        setPantallaActual("kilometrajes");
+    };
+
+    const irAGastos = () => {
+        setPantallaActual("gastos");
+    };
+
+
+    if (verificando) {
 
         return (
 
-            <SafeAreaView style={styles.loadingScreen}>
+            <View
+                style={styles.loadingScreen}
+            >
 
-                <View style={styles.loadingLogo}>
-                    <Text style={styles.loadingLogoText}>
+                <View
+                    style={styles.loadingLogo}
+                >
+
+                    <Text
+                        style={
+                            styles.loadingLogoText
+                        }
+                    >
                         CV
                     </Text>
+
                 </View>
+
 
                 <ActivityIndicator
                     size="large"
                     color="#2563eb"
                 />
 
-                <Text style={styles.loadingText}>
+
+                <Text
+                    style={styles.loadingText}
+                >
                     Cargando sistema...
                 </Text>
 
-            </SafeAreaView>
+            </View>
         );
     }
 
 
-    if (!token) {
+    if (!estaAutenticado) {
 
         return (
 
-            <SafeAreaView style={styles.loginContainer}>
+            <LoginScreen
+                onLoginSuccess={
+                    loginExitoso
+                }
+            />
 
-                <LoginScreen
-                    onLogin={manejarLogin}
-                />
-
-            </SafeAreaView>
         );
     }
 
 
+    /*
+     * MENÚ PRINCIPAL
+     */
+if (pantallaActual === "menu") {
+
+    return (
+        <MenuScreen
+            onVehiculos={irAVehiculos}
+            onServicios={irAServicios}
+            onLogout={cerrarSesion}
+        />
+    );
+}
+
+
+    /*
+     * MÓDULO VEHÍCULOS
+     */
+    if (pantallaActual === "vehiculos") {
+
+        return (
+
+<VehiculosScreen
+    onVolver={irAlMenu}
+    onLogout={cerrarSesion}
+/>
+        );
+    }
+
+
+    /*
+     * MÓDULO RECORDATORIOS
+     */
+    if (
+        pantallaActual ===
+        "recordatorios"
+    ) {
+
+        return (
+
+            <RecordatoriosScreen
+                onVolver={() =>
+                    setPantallaActual(
+                        "servicios"
+                    )
+                }
+                onLogout={
+                    cerrarSesion
+                }
+            />
+        );
+    }
+
+
+    /**
+ * MÓDULO GASTOS
+ */
+if (pantallaActual === "gastos") {
+
     return (
 
-        <SafeAreaView style={styles.appContainer}>
-
-            {/* HEADER PRINCIPAL */}
-            <View style={styles.header}>
-
-                <View style={styles.headerContent}>
-
-                    <View style={styles.brandContainer}>
-
-                        <View style={styles.logo}>
-                            <Text style={styles.logoText}>
-                                CV
-                            </Text>
-                        </View>
-
-                        <View>
-
-                            <Text style={styles.brandTitle}>
-                                CONTROL VEHICULAR
-                            </Text>
-
-                            {!esMovil && (
-                                <Text style={styles.brandSubtitle}>
-                                    Sistema de administración vehicular
-                                </Text>
-                            )}
-
-                        </View>
-
-                    </View>
+            <GastosScreen
+                onVolver={() =>
+                    setPantallaActual(
+                        "servicios"
+                    )
+                }
+                onLogout={
+                    cerrarSesion
+                }
+            />
+    );
+}
 
 
-                    <Pressable
-                        style={({ pressed }) => [
-                            styles.logoutButton,
-                            pressed &&
-                            styles.buttonPressed
-                        ]}
-                        onPress={cerrarSesion}
-                    >
+/**
+ * MÓDULO MANTENIMIENTOS
+ */
+if (pantallaActual === "mantenimientos") {
 
-                        <Text style={styles.logoutText}>
-                            {esMovil
-                                ? "SALIR"
-                                : "CERRAR SESIÓN"}
-                        </Text>
-
-                    </Pressable>
-
-                </View>
-
-            </View>
+    return (
+        <MantenimientosScreen
+            onVolver={irAServicios}
+            onLogout={cerrarSesion}
+        />
+    );
+}
 
 
-            {/* CONTENIDO DE LA APLICACIÓN */}
-            <View style={styles.main}>
+/**
+ * MÓDULO KILOMETRAJES
+ */
+if (
+    pantallaActual ===
+    "kilometrajes"
+) {
 
-                <RecordatoriosScreen
-                    token={token}
-                />
+    return (
 
-            </View>
+        <KilometrajesScreen
+            onVolver={() =>
+                setPantallaActual(
+                    "servicios"
+                )
+            }
+            onLogout={
+                cerrarSesion
+            }
+        />
+    );
+}
 
-        </SafeAreaView>
+/**
+ * SERVICIOS
+ */
+if (pantallaActual === "servicios") {
+
+    return (
+        <ServiciosScreen
+            onInicio={irAlMenu}
+            onVehiculos={irAVehiculos}
+            onMantenimientos={irAMantenimientos}
+            onRecordatorios={irARecordatorios}
+            onKilometrajes={irAKilometrajes}
+            onGastos={irAGastos}
+            onLogout={cerrarSesion}
+        />
+    );
+}
+
+
+    /*
+     * RESPALDO
+     * Si por algún motivo pantallaActual
+     * contiene un valor desconocido.
+     */
+   return (
+
+<MenuScreen
+
+    onVehiculos={() =>
+        setPantallaActual(
+            "vehiculos"
+        )
+    }
+
+    onServicios={() =>
+        setPantallaActual(
+            "servicios"
+        )
+    }
+
+    onLogout={
+        cerrarSesion
+    }
+/>
+);
+}
+
+export default function App() {
+
+    return (
+
+        <SafeAreaProvider>
+
+            <SafeAreaView
+                style={styles.safeArea}
+                edges={[
+                    "top",
+                    "right",
+                    "bottom",
+                    "left"
+                ]}
+            >
+
+                <AppContent />
+
+            </SafeAreaView>
+
+        </SafeAreaProvider>
     );
 }
 
@@ -212,139 +382,57 @@ const styles = StyleSheet.create({
         backgroundColor: "#eef2f7"
     },
 
-
-    loginContainer: {
-        flex: 1
-    },
+    safeArea: {
+    flex: 1,
+    backgroundColor: "#eef2f7"
+},
 
 
     loadingScreen: {
+
         flex: 1,
+
         backgroundColor: "#eef2f7",
+
         justifyContent: "center",
+
         alignItems: "center"
     },
 
 
     loadingLogo: {
+
         width: 56,
         height: 56,
+
         borderRadius: 14,
+
         backgroundColor: "#0d2340",
+
         justifyContent: "center",
         alignItems: "center",
+
         marginBottom: 20
     },
 
 
     loadingLogoText: {
+
         color: "#ffffff",
+
         fontSize: 18,
+
         fontWeight: "800"
     },
 
 
     loadingText: {
+
         color: "#6b7280",
+
         fontSize: 13,
+
         marginTop: 12
-    },
-
-
-    header: {
-        backgroundColor: "#0d2340",
-        borderBottomWidth: 1,
-        borderBottomColor: "#17395f"
-    },
-
-
-    headerContent: {
-        width: "100%",
-        maxWidth: 1200,
-        alignSelf: "center",
-
-        minHeight: 72,
-
-        paddingHorizontal: 20,
-        paddingVertical: 12,
-
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
-    },
-
-
-    brandContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        flexShrink: 1
-    },
-
-
-    logo: {
-        width: 42,
-        height: 42,
-        borderRadius: 10,
-        backgroundColor: "#ffffff",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 12
-    },
-
-
-    logoText: {
-        color: "#0d2340",
-        fontSize: 15,
-        fontWeight: "900"
-    },
-
-
-    brandTitle: {
-        color: "#ffffff",
-        fontSize: 15,
-        fontWeight: "800"
-    },
-
-
-    brandSubtitle: {
-        color: "#aab8ca",
-        fontSize: 10,
-        marginTop: 3
-    },
-
-
-    logoutButton: {
-        backgroundColor: "#17385f",
-        borderWidth: 1,
-        borderColor: "#345475",
-
-        minHeight: 38,
-
-        paddingHorizontal: 15,
-
-        borderRadius: 8,
-
-        justifyContent: "center",
-        alignItems: "center",
-
-        marginLeft: 10
-    },
-
-
-    logoutText: {
-        color: "#ffffff",
-        fontSize: 10,
-        fontWeight: "800"
-    },
-
-
-    buttonPressed: {
-        opacity: 0.8
-    },
-
-
-    main: {
-        flex: 1
     }
 
 });
